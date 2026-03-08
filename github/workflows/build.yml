@@ -13,11 +13,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Install Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '8.2'
       - name: Build APK
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleRelease
+        run: gradle assembleRelease
       - uses: actions/upload-artifact@v3
         with:
           name: TinyBrowser
-          path: app/build/outputs/apk/release/*.
+          path: app/build/outputs/apk/release/*.apk
