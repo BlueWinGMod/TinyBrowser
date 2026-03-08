@@ -19,7 +19,11 @@ jobs:
           gradle-version: '8.2'
       - name: Build APK
         run: gradle assembleRelease
+      - name: Sign APK
+        run: |
+          keytool -genkey -v -keystore key.jks -alias tiny -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=TinyBrowser"
+          $ANDROID_HOME/build-tools/34.0.0/apksigner sign --ks key.jks --ks-pass pass:password --key-pass pass:password --out app-signed.apk app/build/outputs/apk/release/app-release-unsigned.apk
       - uses: actions/upload-artifact@v4
         with:
           name: TinyBrowser
-          path: app/build/outputs/apk/
+          path: app-signed.apk
