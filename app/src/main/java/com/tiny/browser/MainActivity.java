@@ -1,1 +1,1 @@
-package com.tiny.browser;public class MainActivity extends android.app.Activity{protected void onCreate(android.os.Bundle b){super.onCreate(b);android.webkit.WebView w=new android.webkit.WebView(this);setContentView(w);w.loadUrl("https://google.com");}}
+package com.tiny.browser;public class MainActivity extends android.app.Activity{protected void onCreate(android.os.Bundle b){super.onCreate(b);android.webkit.WebView w=new android.webkit.WebView(this);w.getSettings().setJavaScriptEnabled(true);setContentView(w);w.loadUrl("https://google.com");}}
