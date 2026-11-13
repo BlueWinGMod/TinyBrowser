@@ -1,0 +1,63 @@
+name: Generate TinyBrowser Signing Key
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate permanent signing key
+        env:
+          EXPORT_PASSWORD: ${{ secrets.EXPORT_PASSWORD }}
+        run: |
+          set -e
+
+          if [ -z "$EXPORT_PASSWORD" ]; then
+            echo "Missing EXPORT_PASSWORD secret"
+            exit 1
+          fi
+
+          echo "::add-mask::$EXPORT_PASSWORD"
+
+          KEY_PASSWORD=$(openssl rand -hex 24)
+
+          keytool -genkeypair -noprompt \
+            -keystore tinybrowser-release.jks \
+            -alias tinybrowser \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass "$KEY_PASSWORD" \
+            -keypass "$KEY_PASSWORD" \
+            -dname "CN=TinyBrowser"
+
+          mkdir export
+
+          mv tinybrowser-release.jks export/
+
+          cat > export/credentials.txt <<EOF
+          Alias: tinybrowser
+          Keystore password: $KEY_PASSWORD
+          Key password: $KEY_PASSWORD
+          EOF
+
+          tar -czf tinybrowser-key.tar.gz export/
+
+          openssl enc -aes-256-cbc -salt \
+            -pbkdf2 -iter 200000 \
+            -pass env:EXPORT_PASSWORD \
+            -in tinybrowser-key.tar.gz \
+            -out tinybrowser-key.tar.gz.enc
+
+      - name: Upload encrypted key
+        uses: actions/upload-artifact@v4
+        with:
+          name: TinyBrowser-Permanent-Key
+          path: tinybrowser-key.tar.gz.enc
+          retention-days: 1
+          
