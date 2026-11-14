@@ -1,0 +1,2 @@
+TinyBrowser 4.0
+Fourth release of TinyBrowser.
