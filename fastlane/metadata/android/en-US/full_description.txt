@@ -1,0 +1,8 @@
+TinyBrowser is a minimal Android web browser.
+here the features:
+It is an Lightweight native Android interface
+it has built-in WebView
+Simple address bar
+No third-party Gradle dependencies
+Open-source under GNU GPL-3.0
+No ADS
